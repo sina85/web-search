@@ -1,19 +1,17 @@
 import urllib.request
 from bs4 import BeautifulSoup
 import re
+import os
 
+function_list = ['ZipArchive::addPattern', 'mb_check_encoding', 'mb_convert_encoding', 'mb_convert_variables', 'mb_parse_str']
 def find_func(base):
-    #ZipArchive::addPattern()
-    #scandir
+    a = ['']
     f = urllib.request.urlopen(base)
     soup = BeautifulSoup(f.read(), 'html.parser')
-    a = re.findall('ZipArchive::addPattern\([^\)]*\)', soup.prettify());
-    b = re.findall("mb_check_encoding\([^\)]*\)", soup.prettify());
-    c = re.findall("mb_convert_encoding\([^\)]*\)", soup.prettify());
-    d = re.findall("mb_convert_variables\([^\)]*\)", soup.prettify());
-    e = re.findall("mb_parse_str\([^\)]*\)", soup.prettify());
-    l = a + b + c + d + e
-    return l
+    for i in function_list:
+    	s = i + '\([^\)]*\)'
+    	a.append(re.findall(s, soup.prettify()))
+    return a
 def RecurseLinks(base):
     f = urllib.request.urlopen(base)
     soup = BeautifulSoup(f.read(), 'html.parser')
@@ -34,10 +32,16 @@ def RecurseLinks(base):
                 print (*l, sep =' ,') # save it to a list or return 
                 print ('----')
 
+
+with open('location', 'r') as f:
+    for line in f:
+        RecurseLinks(line.strip())
+  
 # call the initial root web folder
-RecurseLinks('https://plugins.svn.wordpress.org/newsletter/trunk/')
-RecurseLinks('https://plugins.svn.wordpress.org/wordfence/trunk/')
-RecurseLinks('https://plugins.svn.wordpress.org/powerpress/trunk/')
-RecurseLinks('https://plugins.svn.wordpress.org/embedpress/trunk/')
-RecurseLinks('https://plugins.svn.wordpress.org/elementor/trunk/')
-RecurseLinks('https://plugins.svn.wordpress.org/podcast-subscribe-buttons/trunk/')
+#Manual Example
+#RecurseLinks('https://plugins.svn.wordpress.org/newsletter/trunk/')
+#RecurseLinks('https://plugins.svn.wordpress.org/wordfence/trunk/')
+#RecurseLinks('https://plugins.svn.wordpress.org/powerpress/trunk/')
+#RecurseLinks('https://plugins.svn.wordpress.org/embedpress/trunk/')
+#RecurseLinks('https://plugins.svn.wordpress.org/elementor/trunk/')
+#RecurseLinks('https://plugins.svn.wordpress.org/podcast-subscribe-buttons/trunk/')
